@@ -45,7 +45,7 @@ func (t *Table) lengths() []int {
 	return lengths
 }
 
-func (t *Table) WriteTo(w io.Writer) (n int64, err error) {
+func (t *Table) Fprint(w io.Writer) (n int64, err error) {
 	bw := bufio.NewWriter(w)
 	writeStr := func(str string) bool {
 		var wn int
@@ -77,8 +77,8 @@ func (t *Table) WriteTo(w io.Writer) (n int64, err error) {
 			}
 			for c, l := range lengths {
 				val := " " + row[c]
-				if pad := l - len(val); pad > 0 {
-					val += strings.Repeat(" ", pad+1)
+				if pad := l - len(val) + 1; pad > 0 {
+					val += strings.Repeat(" ", pad)
 				}
 				val += " |"
 				if !writeStr(val) {
@@ -96,7 +96,7 @@ func (t *Table) WriteTo(w io.Writer) (n int64, err error) {
 
 func (t *Table) String() string {
 	buf := &bytes.Buffer{}
-	_, err := t.WriteTo(buf)
+	_, err := t.Fprint(buf)
 	if err != nil {
 		panic("Bug")
 	}
